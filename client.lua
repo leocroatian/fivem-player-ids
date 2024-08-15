@@ -33,7 +33,7 @@ Citizen.CreateThread(function()
                 for _, playerId in ipairs(players) do -- loop through the players
                     if NetworkIsPlayerActive(playerId) then -- check if the player is active
                             local player = GetPlayerPed(playerId) -- get the currently selected players ped
-                            if not GetEntityCollisionDisabled(player) and HasEntityClearLosToEntity(PlayerPedId(), player) then -- check if the the entity is in no clip.
+                            if not GetEntityCollisionDisabled(player) and HasEntityClearLosToEntity(PlayerPedId(), player) and IsPedVaulting(player) == false or 1 then -- check if the the entity is in no clip.
                                     local x1, y1, z1 = table.unpack(GetEntityCoords(PlayerPedId(), true))
                                     local x2, y2, z2 = table.unpack(GetEntityCoords(player, true))
                                     local distance = math.floor(GetDistanceBetweenCoords(x1,  y1,  z1,  x2,  y2,  z2,  true))

@@ -42,12 +42,18 @@ Citizen.CreateThread(function()
                                             local name = GetPlayerName(playerId)
                                             local pos = GetOffsetFromEntityInWorldCoords(player, 0.0, 0.0, 1.0)
                             
-                                            local headtag = "~b~Headtag Example "
+                                            -- local headtag = "~b~Headtag Example "
+
+                                            -- if MumbleIsPlayerTalking(playerId) or NetworkIsPlayerTalking(playerId) then
+                                            --     draw3dText(pos, headtag .. '~y~[' .. id .. ']')
+                                            -- else
+                                            --         draw3dText(pos, headtag .. '~w~[' .. id .. ']')
+                                            -- end
 
                                             if MumbleIsPlayerTalking(playerId) or NetworkIsPlayerTalking(playerId) then
-                                                draw3dText(pos, headtag .. '~y~[' .. id .. ']')
+                                                draw3dText(pos, '~y~[' .. id .. ']')
                                             else
-                                                    draw3dText(pos, headtag .. '~w~[' .. id .. ']')
+                                                    draw3dText(pos, '~w~[' .. id .. ']')
                                             end
                                     end 
                             end

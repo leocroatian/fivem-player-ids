@@ -1,5 +1,30 @@
 local maxDistance = 5
 
+function draw3dText(coords, text)
+    local camCoords = GetGameplayCamCoord()
+    local dist = #(coords - camCoords)
+    
+    -- Experimental math to scale the text down
+    local scale = 200 / (GetGameplayCamFov() * dist)
+
+    -- Format the text
+    SetTextColour(red, green, blue, 255)
+    SetTextScale(0.0*scale, 0.55*scale)
+    SetTextFont(0)
+    SetTextEdge(2, 0, 0, 0, 150)
+    SetTextDropShadow()
+    SetTextOutline()
+    SetTextCentre(true)
+
+    -- Diplay the text
+    BeginTextCommandDisplayText("STRING")
+    AddTextComponentSubstringPlayerName(text)
+    SetDrawOrigin(coords, 0)
+    EndTextCommandDisplayText(0.0, 0.0)
+    ClearDrawOrigin()
+
+end
+
 Citizen.CreateThread(function()
     Wait(50)
     if IsPlayerOnline() then
@@ -8,18 +33,21 @@ Citizen.CreateThread(function()
                 for _, playerId in ipairs(players) do -- loop through the players
                     if NetworkIsPlayerActive(playerId) then -- check if the player is active
                             local player = GetPlayerPed(playerId) -- get the currently selected players ped
-                            if not GetEntityCollisionDisabled(player) and HasEntityClearLosToEntity(PlayerPedId(), player) and player ~= PlayerPedId() then -- check if the the entity is in no clip.
+                            if not GetEntityCollisionDisabled(player) and HasEntityClearLosToEntity(PlayerPedId(), player) then -- check if the the entity is in no clip.
                                     local x1, y1, z1 = table.unpack(GetEntityCoords(PlayerPedId(), true))
                                     local x2, y2, z2 = table.unpack(GetEntityCoords(player, true))
                                     local distance = math.floor(GetDistanceBetweenCoords(x1,  y1,  z1,  x2,  y2,  z2,  true))
                                     if distance < maxDistance then
-                                            local id = GetPlayerServerId(player)
+                                            local id = GetPlayerServerId(playerId)
                                             local name = GetPlayerName(playerId)
+                                            local pos = GetOffsetFromEntityInWorldCoords(player, 0.0, 0.0, 1.0)
                             
-                                            if NetworkIsPlayerTalking(player) then
-                                                    DrawText3D(x2, y2, z2+1, '~b~[' .. id .. '] ' .. name, 247, 124, 24)
+                                            local headtag = "~b~Owner "
+
+                                            if MumbleIsPlayerTalking(playerId) or NetworkIsPlayerTalking(playerId) then
+                                                draw3dText(pos, headtag .. '~y~[' .. id .. ']')
                                             else
-                                                    DrawText3D(x2, y2, z2+1, '~w~[' .. id .. '] ' .. name, 255, 255, 255)
+                                                    draw3dText(pos, headtag .. '~w~[' .. id .. ']')
                                             end
                                     end 
                             end
@@ -29,29 +57,3 @@ Citizen.CreateThread(function()
             end
     end
 end)
-
-function DrawText3D(x,y,z, text) 
-    local onScreen,_x,_y=World3dToScreen2d(x,y,z)
-    local px,py,pz=table.unpack(GetGameplayCamCoords())
-    local dist = GetDistanceBetweenCoords(px,py,pz, x,y,z, 1)
-
-    local scale = (1/dist)*2
-    local fov = (1/GetGameplayCamFov())*100
-    local scale = scale*fov
-    
-    if onScreen then
-        SetTextScale(0.0*scale, 0.55*scale)
-        SetTextFont(0)
-        SetTextProportional(1)
-        SetTextColour(red, green, blue, 255)
-        SetTextDropshadow(0, 0, 0, 0, 255)
-        SetTextEdge(2, 0, 0, 0, 150)
-        SetTextDropShadow()
-        SetTextOutline()
-        SetTextEntry("STRING")
-        SetTextCentre(1)
-        AddTextComponentString(text)
-		World3dToScreen2d(x,y,z, 0) --Added Here
-        DrawText(_x,_y)
-    end
-end

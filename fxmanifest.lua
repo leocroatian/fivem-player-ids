@@ -11,11 +11,3 @@ lua54 'yes'
 client_scripts {
     'config.lua',
 }
-
-shared_scripts {
-    'client.lua',
-}
-
-server_scripts {
-    'server.lua',
-}

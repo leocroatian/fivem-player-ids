@@ -2,6 +2,8 @@ local maxDistance = 5
 
 local currentHeadtag
 
+local distances = {}
+
 function draw3dText(coords, text)
     local camCoords = GetGameplayCamCoord()
     local dist = #(coords - camCoords)
@@ -26,17 +28,14 @@ function draw3dText(coords, text)
 end
 
 Citizen.CreateThread(function()
-    Wait(10)
+    Wait(500)
     while true do
         local players = GetActivePlayers() -- get all of the online players
         for _, playerId in ipairs(players) do -- loop through the players
-            if NetworkIsPlayerActive(playerId) then -- check if the player is active
-                local player = GetPlayerPed(playerId) -- get the currently selected players ped
-                if IsPedVaulting(player) or not GetEntityCollisionDisabled(player) and player ~= PlayerPedId() then -- check if the the entity is in no clip.
-                    local x1, y1, z1 = table.unpack(GetEntityCoords(PlayerPedId(), true))
-                    local x2, y2, z2 = table.unpack(GetEntityCoords(player, true))
-                    local distance = math.floor(GetDistanceBetweenCoords(x1,  y1,  z1,  x2,  y2,  z2,  true))
-                    if distance < maxDistance then
+            local player = GetPlayerPed(playerId) -- get the currently selected players ped
+            if distances[playerId] then
+                if IsPedVaulting(player) or not GetEntityCollisionDisabled(player) then -- check if the the entity is in no clip.
+                    if distances[playerId] < maxDistance then
                         local id = GetPlayerServerId(playerId)
                         local pos = GetOffsetFromEntityInWorldCoords(player, 0.0, 0.0, 1.0)
         
@@ -55,8 +54,24 @@ Citizen.CreateThread(function()
                         end
                     end 
                 end
-            end       
+            end      
         end
         Wait(0)
+    end
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        local ped = PlayerPedId()
+        local coords = GetEntityCoords(ped)
+
+        for _, id in ipairs(GetActivePlayers()) do
+            local targetPed = GetPlayerPed(id)
+            if targetPed ~= ped then
+                local distance = #(coords-GetEntityCoords(targetPed))
+				distances[id] = distance
+            end
+        end
+        Wait(1000)
     end
 end)

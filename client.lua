@@ -1,6 +1,6 @@
 local maxDistance = 5
 
-local currentHeadtag = '~b~Navy'
+local currentHeadtag
 
 function draw3dText(coords, text)
     local camCoords = GetGameplayCamCoord()

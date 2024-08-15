@@ -13,8 +13,6 @@ function draw3dText(coords, text)
     SetTextColour(red, green, blue, 255)
     SetTextScale(0.0*scale, 0.55*scale)
     SetTextFont(0)
-    SetTextEdge(2, 0, 0, 0, 150)
-    SetTextDropShadow()
     SetTextOutline()
     SetTextCentre(true)
 
@@ -34,7 +32,7 @@ Citizen.CreateThread(function()
         for _, playerId in ipairs(players) do -- loop through the players
             if NetworkIsPlayerActive(playerId) then -- check if the player is active
                 local player = GetPlayerPed(playerId) -- get the currently selected players ped
-                if IsPedVaulting(player) or not GetEntityCollisionDisabled(player) then -- check if the the entity is in no clip.
+                if IsPedVaulting(player) or not GetEntityCollisionDisabled(player) and player ~= PlayerPedId() then -- check if the the entity is in no clip.
                     local x1, y1, z1 = table.unpack(GetEntityCoords(PlayerPedId(), true))
                     local x2, y2, z2 = table.unpack(GetEntityCoords(player, true))
                     local distance = math.floor(GetDistanceBetweenCoords(x1,  y1,  z1,  x2,  y2,  z2,  true))

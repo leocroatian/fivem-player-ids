@@ -21,7 +21,7 @@ function draw3dText(coords, text)
     -- Diplay the text
     BeginTextCommandDisplayText("STRING")
     AddTextComponentSubstringPlayerName(text)
-    SetDrawOrigin(coords, 0)
+    SetDrawOrigin(coords, 0, false)
     EndTextCommandDisplayText(0.0, 0.0)
     ClearDrawOrigin()
 
